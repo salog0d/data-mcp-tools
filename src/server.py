@@ -1,4 +1,5 @@
 from mcp.server.fastmcp import FastMCP
+from domain.tools.s3_tools import S3Tools as s3tools
 from schemas import (QueryResponse, QueryRequest,
                      TableListRequest, TableListResponse, 
                      SchemaRequest, SchemaResponse, 
@@ -37,25 +38,33 @@ def export_query_s3(request: ExportQueryS3Request) -> ExportQueryS3Response:
 S3 tools
 """
 
-@mcp.tool(name= "List Objects", description= "List objects stored in an S3 instance")
+@mcp.tool(name="List Objects", description= "List objects stored in an S3 instance")
 def list_objects(request: S3ListRequest) -> S3ListResponse:
-    pass
+    try:
+        return s3tools.list_objects(request)
+    except Exception as e:
+        return S3ListResponse(
+            bucket=request.bucket,
+            objects=[],
+            error =str(e)
+        )
+
 
 @mcp.tool(name= "Upload to S3", description= "Upload object to S3 instance")
 def upload_object_s3(request: S3UploadRequest) -> S3OperationResponse:
-    pass
+    return s3tools.upload_object(request)
 
 @mcp.tool(name= "Download from S3", description="Download object from S3 instance")
 def download_object_s3(request: S3DownloadRequest) -> S3OperationResponse:
-    pass
+    return s3tools.download_object(request)
 
 @mcp.tool(name= "Delete from S3", description="Delete object from S3 instance")
 def delete_object_s3(request: S3DeleteRequest) -> S3OperationResponse:
-    pass
+    return s3tools.delete_object(request)
 
 @mcp.tool(name= "Share S3 object", description="Share an S3 object through a temporal url")
 def share_object_s3(request: S3ShareRequest) -> ShareS3Response:
-    pass
+    return s3tools.share_object(request)
 
 
 """
